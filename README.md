@@ -1,8 +1,8 @@
-# ScheduleApp
-이번에 맡게된 일정 관리 앱 프로젝트입니다.
+# ScheduleApp-develop
+이번에 맡게된 일정 관리 앱 v2 프로젝트입니다.
 
 ## 👨‍🏫프로젝트 소개
-일정을 만들어 일정들을 조회하고 수정하며 삭제할수있게 만드는게 요점입니다.
+일정을 만들어 일정들을 만들고 회원가입과 로그인을 할수있게만드는것이 요점입니다.
 
 ## API 명세서 
 [Click here to view the API documentation](https://documenter.getpostman.com/view/41470367/2sAYXBEeZU)
@@ -32,6 +32,7 @@
   <img src="https://img.shields.io/badge/intellijidea-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
   <img src="https://img.shields.io/badge/postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white">
   <img src="https://img.shields.io/badge/spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white"> 
+  <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
   
 </div>
 
@@ -50,4 +51,8 @@
 
 7.데이터베이스에 잘 저장되는가
 
-8.비밀번호를 입력해서 수정과 삭제할때 잘 이용이 되는가.
+8.로그인 이 잘되는가(인증필요)
+
+9.회원가입이잘되는가
+
+10.로그아웃이잘되는가
