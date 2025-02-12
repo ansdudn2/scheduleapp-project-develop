@@ -2,11 +2,14 @@ package org.example.scheduledevelop.controller;
 
 import org.example.scheduledevelop.dto.UserDto;
 import org.example.scheduledevelop.dto.UserRequestDto;
+import org.example.scheduledevelop.dto.UserResponseDto;
 import org.example.scheduledevelop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")  // 사용자 관련 API 경로
@@ -22,6 +25,13 @@ public class UserController {
         UserDto createdUser = userService.createUser(userRequestDto);
         // 생성된 사용자 정보와 상태 코드(201 Created) 반환
         return ResponseEntity.status(201).body(createdUser);
+    }
+
+    // 전체 유저 조회
+    @GetMapping
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        List<UserResponseDto> users = userService.getAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     // 사용자 조회 (단건, GET)
