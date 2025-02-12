@@ -22,5 +22,4 @@ public class ScheduleResponseDto {
         this.username = schedule.getUser().getUsername();  // User의 이름 포함
     }
 
-    // Getter, Setter
 }
