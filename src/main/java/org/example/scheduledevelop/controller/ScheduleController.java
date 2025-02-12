@@ -49,11 +49,17 @@ public class ScheduleController {
 
     // 일정 수정 (PUT)
     @PutMapping("/{id}")
-    public ResponseEntity<ScheduleResponseDto> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto dto) {
-        // 서비스 메서드로 일정 수정 후 응답
-        ScheduleResponseDto response = scheduleService.updateSchedule(id, dto);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+    public ResponseEntity<?> updateSchedule(@PathVariable Long id, @RequestBody ScheduleRequestDto scheduleRequestDto) {
+        if (id == null) {
+            return ResponseEntity.badRequest().body("ID cannot be null"); // String을 응답 본문으로 처리
+        }
+        // 서비스 메서드로 일정 수정
+        ScheduleResponseDto updatedSchedule = scheduleService.updateSchedule(id, scheduleRequestDto);
+        return updatedSchedule != null ? ResponseEntity.ok(updatedSchedule) : ResponseEntity.notFound().build();
     }
+
+
+
 
     // 일정 삭제 (DELETE)
     @DeleteMapping("/{id}")

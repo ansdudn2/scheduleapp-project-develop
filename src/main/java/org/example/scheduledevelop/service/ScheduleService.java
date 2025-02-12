@@ -1,65 +1,86 @@
 package org.example.scheduledevelop.service;
 
+import lombok.RequiredArgsConstructor;
 import org.example.scheduledevelop.dto.ScheduleRequestDto;
 import org.example.scheduledevelop.dto.ScheduleResponseDto;
+import org.example.scheduledevelop.dto.UserResponseDto;
 import org.example.scheduledevelop.entity.Schedule;
 import org.example.scheduledevelop.entity.User;
 import org.example.scheduledevelop.repository.ScheduleRepository;
 import org.example.scheduledevelop.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
 
-    @Autowired
-    public ScheduleService(ScheduleRepository scheduleRepository, UserRepository userRepository) {
-        this.scheduleRepository = scheduleRepository;
-        this.userRepository = userRepository;
-    }
 
-    // 일정 생성
+    @Transactional
     public ScheduleResponseDto createSchedule(ScheduleRequestDto requestDto) {
-        User user = userRepository.findByUsername(requestDto.getAuthor());
+        // 1. User 정보 가져오기 (userId로 조회)
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + requestDto.getUserId()));
+
+        // 2. Schedule 객체 생성
         Schedule schedule = new Schedule(user, requestDto.getTask(), requestDto.getDescription());
-        scheduleRepository.save(schedule);
-        return new ScheduleResponseDto(schedule);
+
+        // 3. 일정 저장
+        Schedule savedSchedule = scheduleRepository.save(schedule);
+
+        // 4. 저장된 일정 정보 반환
+        return new ScheduleResponseDto(savedSchedule);
     }
 
-    // 일정 조회 (단건)
-    public ScheduleResponseDto getScheduleById(Long id) {
-        Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
-        return new ScheduleResponseDto(schedule);
-    }
-
-    // 모든 일정 조회
+    @Transactional(readOnly = true)
     public List<ScheduleResponseDto> getAllSchedules() {
         List<Schedule> schedules = scheduleRepository.findAll();
         return schedules.stream()
                 .map(ScheduleResponseDto::new)
                 .collect(Collectors.toList());
     }
+    public List<UserResponseDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserResponseDto(user.getId(), user.getUsername(), user.getRole()))
+                .collect(Collectors.toList());
+    }
 
-    // 일정 수정
-    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
+    @Transactional(readOnly = true)
+    public ScheduleResponseDto getScheduleById(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
-        schedule.update(requestDto.getTask(), requestDto.getDescription());
-        scheduleRepository.save(schedule);
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + id));
         return new ScheduleResponseDto(schedule);
     }
 
-    // 일정 삭제
+    @Transactional
+    public ScheduleResponseDto updateSchedule(Long id, ScheduleRequestDto requestDto) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + id));
+
+        // 1. User 정보 가져오기 (userId로 조회)
+        User user = userRepository.findById(requestDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + requestDto.getUserId()));
+
+        // 2. Schedule 정보 수정
+        schedule.updateSchedule(user, requestDto.getTask(), requestDto.getDescription());
+
+        // 3. 수정된 일정 정보 반환
+        return new ScheduleResponseDto(schedule);
+    }
+
+    @Transactional
     public void deleteSchedule(Long id) {
         Schedule schedule = scheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found with id: " + id));
+
         scheduleRepository.delete(schedule);
     }
 }
+

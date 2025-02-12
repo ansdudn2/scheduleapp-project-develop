@@ -2,11 +2,14 @@ package org.example.scheduledevelop.service;
 
 import org.example.scheduledevelop.dto.UserDto;
 import org.example.scheduledevelop.dto.UserRequestDto;
+import org.example.scheduledevelop.dto.UserResponseDto;
 import org.example.scheduledevelop.entity.User;
 import org.example.scheduledevelop.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -34,6 +37,14 @@ public class UserService {
         return new UserDto(user.getId(), user.getUsername(), user.getEmail(), user.getRole(), user.getCreatedAt(), user.getUpdatedAt());
     }
 
+    // 전체 사용자 조회
+    public List<UserResponseDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(user -> new UserResponseDto(user.getId(), user.getUsername(), user.getRole()))
+                .collect(Collectors.toList());
+    }
+
     // 사용자 수정
     public UserDto updateUser(Long id, UserRequestDto userRequestDto) {
         User existingUser = userRepository.findById(id).orElse(null);
@@ -45,6 +56,11 @@ public class UserService {
         existingUser.setUsername(userRequestDto.getUsername());
         existingUser.setEmail(userRequestDto.getEmail());
         existingUser.setRole(userRequestDto.getRole());
+
+        // 비밀번호가 비어있지 않으면 비밀번호도 수정
+        if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isEmpty()) {
+            existingUser.setPassword(userRequestDto.getPassword());
+        }
 
         // 수정된 사용자 저장
         userRepository.save(existingUser);
