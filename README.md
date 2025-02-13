@@ -7,7 +7,7 @@
 ## API 명세서 
 [Click here to view the API documentation](https://documenter.getpostman.com/view/41470367/2sAYXBEeZU)
 ## ERD
-![Image](https://github.com/user-attachments/assets/acdb1f6e-bf3c-49d2-8b14-60491ada007e)
+![Image](https://github.com/user-attachments/assets/3a8a3e46-6c07-4a99-a0c3-bc5e8a47ee7f)
 
 ## ⏲️개발기간
 -2025.01.27~2025.02.4
