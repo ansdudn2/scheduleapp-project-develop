@@ -14,26 +14,22 @@ public class AuthenticationFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
             throws IOException, ServletException {
 
-        // HttpServletRequest에서 경로 확인
         HttpServletRequest httpRequest = (HttpServletRequest) servletRequest;
 
         // 로그인 및 회원가입 요청은 인증 처리에서 제외
         String requestURI = httpRequest.getRequestURI();
         if (requestURI.startsWith("/auth/login") || requestURI.startsWith("/auth/signup")) {
-            // 로그인 또는 회원가입 경로는 필터를 거치지 않도록 처리
             chain.doFilter(servletRequest, servletResponse);
             return;
         }
 
-        // 인증 여부 체크
+        // 인증 여부 체크: 세션에서 "userEmail"을 확인
         HttpSession session = httpRequest.getSession(false);
-        if (session == null || session.getAttribute("user") == null) {
-            // 세션이 없거나 사용자 정보가 없다면 인증 실패
+        if (session == null || session.getAttribute("userEmail") == null) {
             ((HttpServletResponse) servletResponse).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
             return;
         }
 
-        // 인증된 사용자라면 요청을 계속 진행
         chain.doFilter(servletRequest, servletResponse);
     }
 
